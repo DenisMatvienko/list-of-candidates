@@ -24,21 +24,5 @@ export default ({person}) => (
                 </tr>
             </tbody>
         </table>
-
-
-
-
-{/* 
-        <p>Выбран пользователь:</p> <b>{person.firstName + ' ' + person.lastName}</b>
-        <p>Описание:</p>
-        <textarea defaultValue={person.description} />
-        <p>Адрес проживания:</p>
-        <b>9792 Mattis Ct</b>
-        <p>Город:</p>
-        <b>Waukesha</b>
-        <p>Провинция/штат:</p>
-        <b>WI</b>
-        <p>Индекс:</p>
-        <b>22178</b> */}
     </div>
 )

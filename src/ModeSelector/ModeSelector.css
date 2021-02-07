@@ -1,0 +1,9 @@
+.buttons-main {
+  display: flex;
+  justify-content: center;
+  margin-top: 300px;
+}
+
+.button-main {
+  margin-right: 30px;
+}
