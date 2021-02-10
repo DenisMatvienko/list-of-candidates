@@ -2,7 +2,7 @@ import React from 'react'
 
 export default ({person}) => (
     <div>
-        <table className="table">
+        <table className="table mt-5">
             <thead>
                 <tr>
                     <th>Выбран пользователь:</th>

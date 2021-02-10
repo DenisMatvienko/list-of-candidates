@@ -1,11 +1,12 @@
-import './App.css';
-import React, { Component } from 'react';
-import Loader from './Loader/Loader';
-import Table from './Table/Table';
-import DetailRowView from './DetailRowView/DetailRowView';
-import ModeSelector from './ModeSelector/ModeSelector';
-import ReactPaginate from 'react-paginate';
-import _ from 'lodash';
+import './App.css'
+import React, { Component } from 'react'
+import Loader from './Loader/Loader'
+import Table from './Table/Table'
+import DetailRowView from './DetailRowView/DetailRowView'
+import ModeSelector from './ModeSelector/ModeSelector'
+import ReactPaginate from 'react-paginate'
+import TableSearch from './TableSearch/TableSearch'
+import _ from 'lodash'
 
 class App extends Component {
 
@@ -13,6 +14,7 @@ class App extends Component {
     isModeSelected: false,
     isLoading: false,
     data: [],
+    search: '',
     sort: 'asc', // Направление, так же будет принимать desc 
     sortField: 'id',
     row: null,
@@ -61,6 +63,25 @@ class App extends Component {
     this.setState({currentPage: selected})
   }
 
+  searchHandler = search => {
+    this.setState({search, currentPage: 0}) // currentPage: 0 для поиска на других страницах пагинации, для этого делали параметр forcePage
+  }
+
+  getFilteredData() {
+    const {data, search} = this.state
+
+    if (!search) {
+      return data
+    }
+
+    return data.filter(item => {
+      // Выбираем поля которые собираемя фильтровать по поиску
+      return item['firstName'].toLowerCase().includes(search.toLowerCase()) 
+      || item['lastName'].toLowerCase().includes(search.toLowerCase())
+      || item['email'].toLowerCase().includes(search.toLowerCase()) 
+    })
+  }
+
   render() {
     const pageSize = 50;
     // если не выбрали никакой isModeSelected
@@ -72,26 +93,33 @@ class App extends Component {
       )
     }
 
-    const displayData = _.chunk(this.state.data, pageSize)[this.state.currentPage]
+    const filterData = this.getFilteredData()
+
+    const pageCount = Math.ceil(filterData.length / pageSize)
+
+    const displayData = _.chunk(filterData, pageSize)[this.state.currentPage]
 
     return(
       <div className="container"> 
         {
           this.state.row
-          ? <DetailRowView className="mt-5" person={this.state.row}/> // если вызываем onRowSelect по клику, срабатывает компонент DetailRowView
+          ? <DetailRowView person={this.state.row}/> // если вызываем onRowSelect по клику, срабатывает компонент DetailRowView
           : null // если ничего не делаем то null
         } 
 
         {
           this.state.isLoading
           ? <Loader/> // если (state isLoading) - не загрузилиь данные, работает Loader
-          : <Table 
+          : <React.Fragment>
+            <TableSearch onSearch={this.searchHandler}/>
+            <Table 
             data={displayData} // если данные загрузились Table, куда передаем параметры data={this.state.data}
             onSort={this.onSort}
             sort={this.state.sort} // при изменении сортировки меняем sort
             sortField={this.state.sortField} // при изменении сортировки меняем sortField
             onRowSelect={this.onRowSelect}
-            />  
+            /> 
+            </React.Fragment> 
         }
         
         {
@@ -101,7 +129,7 @@ class App extends Component {
             nextLabel={'next'}
             breakLabel={'...'}
             breakClassName={'break-me'}
-            pageCount={20}
+            pageCount={pageCount}
             marginPagesDisplayed={2}
             pageRangeDisplayed={5}
             onPageChange={this.pageChangeHandler}
@@ -114,6 +142,7 @@ class App extends Component {
             nextClassName="page-item"
             previousLinkClassName="page-link"
             nextLinkClassName="page-link"
+            forcePage={this.state.currentPage}
           /> : null
         }
       </div>
