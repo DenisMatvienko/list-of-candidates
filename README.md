@@ -1,6 +1,6 @@
 <h2 align="center">List of interview candidates</h2>
 
-##
+#
 
 Список людей, получаемый с сервера в json-формате.
 
